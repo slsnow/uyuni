@@ -7,6 +7,7 @@ centos: --tags @centos_minion
 changing_software_channels: --tags @scope_changing_software_channels
 cobbler: --tags @scope_cobbler
 configuration_channels: --tags @scope_configuration_channels
+containerized_proxy: --tags @scope_containerized_proxy
 content_lifecycle_management: --tags @scope_content_lifecycle_management
 content_staging: --tags @scope_content_staging
 cve_audit: --tags @scope_cve_audit
