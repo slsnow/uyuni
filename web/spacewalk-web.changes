@@ -1,3 +1,4 @@
+- Handle multi line error messages in proxy containers config creation
 - Update translation strings
 
 -------------------------------------------------------------------
