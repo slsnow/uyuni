@@ -61,7 +61,7 @@ public class DistroTest {
         String arch = "i386";
 
         // Act
-        Distro newDistro = new Distro.Builder()
+        Distro newDistro = new Distro.Builder<String>()
                 .setName(name)
                 .setKernel(kernel)
                 .setInitrd(initrd)
