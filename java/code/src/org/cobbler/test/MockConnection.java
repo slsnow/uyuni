@@ -40,16 +40,16 @@ public class MockConnection extends CobblerConnection {
 
     private final Logger log = LogManager.getLogger(MockConnection.class);
 
-    private static List<Map> profiles = new ArrayList<>();
-    private static List<Map> distros = new ArrayList<>();
-    private static List<Map> systems = new ArrayList<>();
-    private static List<Map> images = new ArrayList<>();
+    private static List<Map<String, Object>> profiles = new ArrayList<>();
+    private static List<Map<String, Object>> distros = new ArrayList<>();
+    private static List<Map<String, Object>> systems = new ArrayList<>();
+    private static List<Map<String, Object>> images = new ArrayList<>();
 
 
-    private static Map<String, Map> systemMap = new HashMap<>();
-    private static Map<String, Map> profileMap = new HashMap<>();
-    private static Map<String, Map> distroMap = new HashMap<>();
-    private static Map<String, Map> imageMap = new HashMap<>();
+    private static Map<String, Map<String, Object>> systemMap = new HashMap<>();
+    private static Map<String, Map<String, Object>> profileMap = new HashMap<>();
+    private static Map<String, Map<String, Object>> distroMap = new HashMap<>();
+    private static Map<String, Map<String, Object>> imageMap = new HashMap<>();
 
     private static final List<String> POWER_COMMANDS = new ArrayList<>();
 
@@ -119,11 +119,11 @@ public class MockConnection extends CobblerConnection {
             return profiles;
         }
         else if ("find_profile".equals(name)) {
-            return find((Map) args[0], profiles);
+            return find((Map<String, Object>) args[0], profiles);
         }
         else if (name.equals("modify_profile")) {
             log.debug("PROFILE: Modify  w/ handle {}, set {} to {}", args[0], args[1], args[2]);
-            profileMap.get(args[0]).put(args[1], args[2]);
+            profileMap.get(args[0]).put((String) args[1], args[2]);
         }
         else if ("get_profile".equals(name)) {
             return findByName((String) args[0], profiles);
@@ -183,7 +183,7 @@ public class MockConnection extends CobblerConnection {
         else if (name.equals("modify_system")) {
             Map system = systemMap.get(args[0]);
             system.put(args[1], args[2]);
-            systemMap.get(args[0]).put(args[1], args[2]);
+            systemMap.get(args[0]).put((String) args[1], args[2]);
         }
         else if ("get_system".equals(name)) {
             return findByName((String) args[0], systems);
@@ -223,9 +223,9 @@ public class MockConnection extends CobblerConnection {
             return images;
         }
         else if (name.equals("modify_image")) {
-            Map image = imageMap.get(args[0]);
-            image.put(args[1], args[2]);
-            imageMap.get(args[0]).put(args[1], args[2]);
+            Map<String, Object> image = imageMap.get(args[0]);
+            image.put((String) args[1], args[2]);
+            imageMap.get(args[0]).put((String) args[1], args[2]);
         }
         else if ("rename_image".equals(name)) {
             imageMap.get(args[0]).put("name", args[2]);
@@ -268,8 +268,8 @@ public class MockConnection extends CobblerConnection {
     }
 
     private void modifyDistro(Object arg, Object arg1, Object arg2) {
-        Map distro = distroMap.get(arg);
-        distro.put(arg1, arg2);
+        Map<String, Object> distro = distroMap.get(arg);
+        distro.put((String) arg1, arg2);
 
         // Some cobbler options have 2 names (the first name is used for writing to cobbler,
         // and the second one for reading from cobbler. Here we make sure the second one
@@ -296,26 +296,26 @@ public class MockConnection extends CobblerConnection {
         profile.put("virt_path", "/tmp/foo");
         profile.put("virt_file_size", 8);
         profile.put("virt_ram", 512);
-        profile.put("kernel_options", new HashMap());
-        profile.put("kernel_options_post", new HashMap());
-        profile.put("autoinstall_meta", new HashMap());
+        profile.put("kernel_options", new HashMap<>());
+        profile.put("kernel_options_post", new HashMap<>());
+        profile.put("autoinstall_meta", new HashMap<>());
         profile.put("redhat_management_key", "");
         return key;
     }
 
     private String newSystem() {
-        Map profile = new HashMap();
+        Map<String, Object> profile = new HashMap<>();
         String key = random();
         profile.put("uid", random());
-        Map interfaces = new HashMap();
-        Map iface = new HashMap();
+        Map<String, Map<String, Object>> interfaces = new HashMap<>();
+        Map<String, Object> iface = new HashMap<>();
         iface.put("mac_address", NetworkInterfaceTest.TEST_MAC);
         iface.put("ip_address", "127.0.0.1");
         interfaces.put("eth0", iface);
         profile.put("interfaces", interfaces);
         systems.add(profile);
         systemMap.put(key, profile);
-        profile.put("autoinstall_meta", new HashMap());
+        profile.put("autoinstall_meta", new HashMap<>());
         profile.put("redhat_management_key", "");
         return key;
     }
@@ -338,15 +338,15 @@ public class MockConnection extends CobblerConnection {
         distro.put("virt_path", "/tmp/foo");
         distro.put("virt_file_size", 8);
         distro.put("virt_ram", 512);
-        distro.put("kernel_options", new HashMap());
-        distro.put("kernel_options_post", new HashMap());
-        distro.put("autoinstall_meta", new HashMap());
+        distro.put("kernel_options", new HashMap<>());
+        distro.put("kernel_options_post", new HashMap<>());
+        distro.put("autoinstall_meta", new HashMap<>());
         distro.put("redhat_management_key", "");
         return key;
     }
 
-    private Map findByName(String name, List<Map> maps) {
-        for (Map map : maps) {
+    private Map<String, Object> findByName(String name, List<Map<String, Object>> maps) {
+        for (Map<String, Object> map : maps) {
             if (name.equals(map.get("name"))) {
                 return map;
             }
@@ -355,9 +355,9 @@ public class MockConnection extends CobblerConnection {
     }
 
 
-    private List<Map<String, Object>> find(Map<String, Object> criteria, List<Map> maps) {
+    private List<Map<String, Object>> find(Map<String, Object> criteria, List<Map<String, Object>> maps) {
         List<Map<String, Object>> ret = new LinkedList<>();
-        for (Map map : maps) {
+        for (Map<String, Object> map : maps) {
             int matched = 0;
             for (String key : criteria.keySet()) {
                 if (!criteria.get(key).equals(map.get(key))) {
